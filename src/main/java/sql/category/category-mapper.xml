@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<!-- CATEGORY 테이블 관련 쿼리문들 -->
+	
+	
+	
+	<!-- 카테고리 소분류 조회용 쿼리문 -->
+	<entry key="selectCategoryList">
+		SELECT *
+ 		  FROM CATEGORY              
+	</entry>
+	
+	<!-- 카테고리 대분류 조회용 쿼리문 -->
+	<entry key="selectSubCategoryList">
+		SELECT *
+		  FROM CATEGORY
+		  JOIN SUBCATEGORY USING(CATEGORY_NO)
+		 WHERE CATEGORY_NO = ?	                       
+	</entry>
+	
+	<!-- 카테고리 대분류 상세조회용 쿼리문 -->
+	<entry key="selectCategory">
+		SELECT *
+		  FROM CATEGORY
+		 WHERE CATEGORY_NO = ?             
+	</entry>
+	
+	<!-- 카테고리 소분류 상세조회용 쿼리문 -->
+	<entry key="selectSubCategory">
+		SELECT SUBCATEGORY_NO, SUBCATEGORY_NAME
+		  FROM SUBCATEGORY
+		 WHERE SUBCATEGORY_NO = ?                       
+	</entry>
+	
+	<!-- 카테고리 소분류 전부 조회용 쿼리 -->
+	<entry key="selectAllSubCategoryList">
+		SELECT *
+		  FROM SUBCATEGORY
+		  JOIN CATEGORY USING(CATEGORY_NO)
+	</entry>
+	
+	
+</properties>

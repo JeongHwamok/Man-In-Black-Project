@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<!-- product 테이블 관련 쿼리문들 -->
+	<!--  상품게시판 product 추가용 쿼리 -->
+	<entry key="insertProduct">
+			INSERT INTO PRODUCT VALUES(SEQ_PRODUCT_NO.NEXTVAL,
+                            ?,
+                            ?,
+                            ?,
+                            ?,
+                            SYSDATE,
+                            'Y',
+                            ?,
+                            ?)                       
+	</entry>
+	
+	<!-- 상품게시판 이미지 추가용 쿼리 -->
+	<entry key="insertImages">
+		INSERT INTO IMAGE(          IMAGE_NO,
+							IMAGE_ORIGIN_NAME,
+							IMAGE_CHANGE_NAME,
+							IMAGE_PATH,
+							IMAGE_LEVEL,
+							PRODUCT_NO)
+					 VALUES(SEQ_IMAGE_NO.NEXTVAL,
+							?,
+							?,
+							?,
+							?,
+							SEQ_PRODUCT_NO.CURRVAL)
+	</entry>
+
+	
+	<!-- 상품 수 카운트용 쿼리 -->
+	<entry key="selectListCount">
+		SELECT COUNT(*) "COUNT"
+		  FROM PRODUCT
+		 WHERE PRODUCT_STATUS = 'Y'
+	</entry>
+	
+	<!-- 상품 리스트와 섬네일 가져오는 쿼리 -->
+	<entry key="selectProductList">
+		SELECT PRODUCT_NO,
+		       PRODUCT_NAME,
+		       PRODUCT_PRICE,
+		       PRODUCT_STOCK,
+		       SIZE_NAME,
+		       CATEGORY_NAME,
+		       SUBCATEGORY_NAME,
+		       IMAGE_PATH
+		  FROM(SELECT ROWNUM "RNUM", Q.*
+		         FROM (SELECT PRODUCT_NO,
+		                      PRODUCT_NAME,
+		                      PRODUCT_PRICE,
+		                      PRODUCT_STOCK,
+		                      SIZE_NAME,
+		                      CATEGORY_NAME,
+		                      SUBCATEGORY_NAME, 
+		                      IMAGE_PATH || IMAGE_CHANGE_NAME "IMAGE_PATH"
+		                 FROM PRODUCT
+		                 JOIN "SUBCATEGORY" USING(SUBCATEGORY_NO)
+		                 JOIN "CATEGORY" USING(CATEGORY_NO)
+		                 JOIN "SIZE" USING(SIZE_NO)
+		                 JOIN "IMAGE" USING(PRODUCT_NO)
+		                WHERE PRODUCT_STATUS = 'Y'
+		                  AND IMAGE_LEVEL = 1
+		                ORDER BY PRODUCT_NO DESC) Q)
+		 WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<!-- 상품 상세조회용 쿼리문 -->
+	<entry key="selectProductDetail">
+		SELECT  PRODUCT_NO, PRODUCT_NAME, PRODUCT_COMMENT, PRODUCT_PRICE, PRODUCT_STOCK,
+		SIZE_NAME, CATEGORY_NAME,  SUBCATEGORY_NAME, IMAGE_PATH || IMAGE_CHANGE_NAME "IMAGE_PATH", IMAGE_LEVEL
+		 
+		  FROM PRODUCT
+		  JOIN "SUBCATEGORY" USING(SUBCATEGORY_NO)
+		  JOIN "CATEGORY" USING(CATEGORY_NO)
+		  JOIN "SIZE" USING(SIZE_NO)
+		  JOIN "IMAGE" USING(PRODUCT_NO)
+		  WHERE PRODUCT_STATUS = 'Y'
+		  AND PRODUCT_NO = ?
+	</entry>
+	
+	<!-- 검색된 상품 수 카운트용 쿼리 -->
+	<entry key="selectKeywordListCount">
+		SELECT COUNT(*) "COUNT"
+		  FROM PRODUCT
+		  JOIN SUBCATEGORY USING (SUBCATEGORY_NO)
+		 WHERE PRODUCT_STATUS = 'Y'
+		 
+	</entry>
+	
+	<!-- 상품 키워드 조회용 쿼리 -->
+	<entry key="selectKeywordProductList">
+		SELECT PRODUCT_NO,
+		       PRODUCT_NAME,
+		       PRODUCT_PRICE,
+		       PRODUCT_STOCK,
+		       SIZE_NAME,
+		       CATEGORY_NAME,
+		       SUBCATEGORY_NAME,
+		       IMAGE_PATH,
+		       LIKE_COUNT
+		  FROM(SELECT ROWNUM "RNUM", Q.*
+		         FROM (SELECT PRODUCT_NO,
+		                      PRODUCT_NAME,
+		                      PRODUCT_PRICE,
+		                      PRODUCT_STOCK,
+		                      SIZE_NAME,
+		                      CATEGORY_NAME,
+		                      SUBCATEGORY_NAME, 
+		                      IMAGE_PATH || IMAGE_CHANGE_NAME "IMAGE_PATH",
+		                      LIKE_COUNT
+		                 FROM PRODUCT
+		                 LEFT JOIN(SELECT PRODUCT_NO, COUNT(*) LIKE_COUNT FROM "LIKE"
+		                 		   GROUP BY PRODUCT_NO) USING(PRODUCT_NO)
+		                 JOIN "SUBCATEGORY" USING(SUBCATEGORY_NO)
+		                 JOIN "CATEGORY" USING(CATEGORY_NO)
+		                 JOIN "SIZE" USING(SIZE_NO)
+		                 JOIN "IMAGE" USING(PRODUCT_NO)
+		                 
+		                WHERE PRODUCT_STATUS = 'Y'
+		                  AND IMAGE_LEVEL = 1
+	</entry>
+	<entry key="selectKeywordProductList2">
+	
+		                , PRODUCT_NO DESC) Q)
+		 WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<!-- 한 상품 이미지 목록조회용 -->
+	<entry key="selectImgList">
+		SELECT *
+		   FROM IMAGE
+		WHERE PRODUCT_NO = ?
+	</entry>
+
+	<!-- 상품 수정용 쿼리문1 -->
+	<entry key="updateProduct">
+		UPDATE PRODUCT
+     	 SET PRODUCT_NAME = ?,
+            PRODUCT_COMMENT = ?,
+            PRODUCT_PRICE = ?,
+            PRODUCT_STOCK = ?,
+            SIZE_NO = ?,
+            SUBCATEGORY_NO = ?
+		WHERE PRODUCT_STATUS = 'Y'
+		    AND PRODUCT_NO = ?
+	</entry>
+	
+	<!-- 상품 수정용 쿼리문 2 -->
+	<entry key="updateImages">
+	INSERT INTO IMAGE(          IMAGE_NO,
+						IMAGE_ORIGIN_NAME,
+						IMAGE_CHANGE_NAME,
+						IMAGE_PATH,
+						IMAGE_LEVEL,
+						PRODUCT_NO)
+				 VALUES(SEQ_IMAGE_NO.NEXTVAL,
+						?,
+						?,
+						?,
+						?,
+						?)
+	</entry>
+
+
+
+	<!-- 상품 수정 추가용 쿼리 -->
+	<entry key="updateInsertPrdocut">
+		INSERT INTO IMAGE(          IMAGE_NO,
+							IMAGE_ORIGIN_NAME,
+							IMAGE_CHANGE_NAME,
+							IMAGE_PATH,
+							IMAGE_LEVEL,
+							PRODUCT_NO)
+					 VALUES(SEQ_IMAGE_NO.NEXTVAL,
+							?,
+							?,
+							?,
+							?,
+							?)
+	</entry>
+	
+	<entry key="date"> ORDER BY PRODUCT_DATE DESC </entry>
+	<entry key="priceAsc"> ORDER BY PRODUCT_PRICE ASC</entry>
+	<entry key="priceDesc"> ORDER BY PRODUCT_PRICE DESC</entry>
+	<entry key="category">AND SUBCATEGORY_NO = ?</entry>
+	<entry key="like"> ORDER BY LIKE_COUNT DESC NULLS LAST</entry>
+
+
+	<entry key="deleteImage">
+		DELETE FROM IMAGE
+		 WHERE IMAGE_NO = ?
+	</entry>
+		<!-- 관리자용 상품 전체조회 쿼리 -->
+	<entry key="adminSelectProductAll">
+		SELECT *
+		FROM PRODUCT
+	</entry>
+	<!-- 관리자용 상품정보 수정 쿼리 -->
+	<entry key="adminUpdateProduct">
+		UPDATE PRODUCT
+		SET PRODUCT_STATUS = ?
+			,PRODUCT_DATE = SYSDATE
+		WHERE PRODUCT_NO = ?
+			
+	</entry>
+	
+	<!-- 상품삭제용 쿼리 -->
+	<entry key="deleteProduct">
+		UPDATE PRODUCT
+		   SET PRODUCT_STATUS ='N'
+		 WHERE PRODUCT_NO = ?
+		    AND PRODUCT_STATUS ='Y'
+			
+	</entry>
+	
+		<!--상품 전체조회 쿼리 -->
+	<entry key="ProductList">
+		SELECT *
+		FROM PRODUCT
+		ORDER BY PRODUCT_NO DESC
+	</entry>
+	
+	<!-- 좋아요 insert -->
+	<entry key="insertLike">
+		INSERT INTO "LIKE" VALUES(?
+								, ?)
+	</entry>
+	
+	<!-- 좋아요 delete -->
+	<entry key="deleteLike">
+		DELETE
+		  FROM "LIKE"
+		 WHERE MEMBER_NO = ?
+		   AND PRODUCT_NO = ?
+	</entry>
+	
+	<!-- 게시글 좋아요 누름 체크 여부 -->
+	<entry key="likeCheck">
+		SELECT COUNT(*)
+		  FROM "LIKE"
+		 WHERE MEMBER_NO = ?
+		   AND PRODUCT_NO = ?
+	</entry>
+	
+	<!-- 게시글 한건 좋아요 갯수 세기 -->
+	<entry key="selectLikeCount">
+		SELECT COUNT(*)
+		  FROM "LIKE"
+		 WHERE PRODUCT_NO = ?
+	</entry>
+	
+	<!-- 마이페이지 좋아요 상품조회 -->
+	<entry key="likeSelect">
+		SELECT PRODUCT_NO, PRODUCT_NAME, PRODUCT_PRICE, SIZE_NAME, CATEGORY_NAME, SUBCATEGORY_NAME, IMAGE_PATH || IMAGE_CHANGE_NAME "IMAGE_PATH"
+  FROM  "LIKE"
+  JOIN PRODUCT USING(PRODUCT_NO)
+  JOIN IMAGE USING(PRODUCT_NO)
+  JOIN "SUBCATEGORY" USING(SUBCATEGORY_NO)
+  JOIN "CATEGORY" USING(CATEGORY_NO)
+  JOIN "SIZE" USING(SIZE_NO)
+ WHERE MEMBER_NO= ?
+      AND PRODUCT_STATUS= 'Y'
+      AND  IMAGE_LEVEL = 1
+	</entry>
+	
+</properties>
+

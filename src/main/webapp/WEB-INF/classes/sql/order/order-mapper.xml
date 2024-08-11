@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<!-- order 관련 쿼리문 -->
+	
+	<!-- 주문내역 쿼리문 -->
+	<entry key="selectOrderItemList">
+		SELECT OI.ORDER_ITEM_NO, P.PRODUCT_NO, OI.MEMBER_NO, OI.ORDER_NO, 
+		        I.IMAGE_PATH, P.PRODUCT_NAME, OI.ORDER_ITEM_PRICE,
+		        OI.ORDER_ITEM_QUANTITY, O.ORDER_DATE, O.ORDER_STATUS, M.MEMBER_ID,
+		        I.IMAGE_CHANGE_NAME
+		  FROM ORDER_ITEM OI
+		  JOIN PRODUCT P ON (OI.PRODUCT_NO = P.PRODUCT_NO)
+		  JOIN "ORDER" O ON (OI.ORDER_NO = O.ORDER_NO)
+		  JOIN IMAGE I ON (OI.PRODUCT_NO = I.PRODUCT_NO)
+		  JOIN MEMBER M ON (OI.MEMBER_NO = M.MEMBER_NO)
+		 WHERE MEMBER_ID = ?
+		   AND IMAGE_LEVEL = 1
+   </entry>
+   
+   <!-- 관리자용 주문내역 전체조회 -->
+	<entry key="adminSelectOrder">
+			SELECT O.ORDER_NO, 
+		       O.ORDER_STATUS, 
+		       O.ORDER_DATE, 
+		       O.ORDER_MESSAGE, 
+		       SUM(OI.ORDER_ITEM_PRICE * OI.ORDER_ITEM_QUANTITY) AS ORDER_TOTAL, 
+		       O.ORDER_CANCLE, 
+		       O.ORDER_CODE, 
+		       O.ORDER_ADDRESS, 
+		       O.MEMBER_NO
+		FROM ORDER_ITEM OI
+		JOIN PRODUCT P ON OI.PRODUCT_NO = P.PRODUCT_NO
+		JOIN "ORDER" O ON OI.ORDER_NO = O.ORDER_NO
+		JOIN MEMBER M ON OI.MEMBER_NO = M.MEMBER_NO
+		GROUP BY O.ORDER_NO, O.ORDER_STATUS, O.ORDER_DATE, O.ORDER_MESSAGE, O.ORDER_CANCLE, O.ORDER_CODE, O.ORDER_ADDRESS, O.MEMBER_NO
+		ORDER BY O.ORDER_NO
+	</entry>
+	<!-- 관리자용 주문내역 수정 -->
+	<entry key="adminUpdateOrder">
+		UPDATE "ORDER"
+		SET ORDER_STATUS = ?,
+		ORDER_CANCLE = ?,
+		ORDER_ADDRESS = ?
+		WHERE ORDER_NO = ?
+	</entry>
+	<entry key="insertOrder">
+		INSERT INTO "ORDER"
+		VALUES(SEQ_ORDER_NO.NEXTVAL, '배송준비중', SYSDATE, ?, ?, DEFAULT, ?, ?, ?)
+	</entry>
+	<entry key="insertOrderItem">
+		INSERT INTO ORDER_ITEM
+		VALUES(SEQ_ORDER_ITEM_NO.NEXTVAL, ?, ?, ?, SEQ_ORDER_NO.CURRVAL, ?)
+	</entry>
+	<entry key="selectPreviousOrder">
+		SELECT ORDER_NO,
+		       ORDER_STATUS,
+		       ORDER_DATE,
+		       ORDER_MESSAGE,
+		       ORDER_PRICE,
+		       ORDER_CANCLE,
+		       ORDER_CODE,
+		       ORDER_ADDRESS,
+		       MEMBER_NO
+		  FROM "ORDER"
+			 WHERE ORDER_NO = (SELECT MAX(ORDER_NO)
+			 					 FROM "ORDER")
+	</entry>
+</properties>

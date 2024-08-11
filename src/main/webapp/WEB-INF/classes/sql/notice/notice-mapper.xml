@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<!-- NOTICE 테이블 관련 쿼리문들 -->
+	<entry key="selectNoticeList">
+		SELECT NOTICE_NO,
+			   NOTICE_TYPE,
+			   NOTICE_TITLE,
+			   NOTICE_CONTENT,
+			   NOTICE_HIT,
+			   NOTICE_RDATE,
+			   NOTICE_STATUS
+		  FROM NOTICE
+		 WHERE NOTICE_STATUS = 'Y'		                       
+	</entry>
+	<entry key="selectListCount">
+		SELECT COUNT(*) COUNT
+		  FROM NOTICE
+		 WHERE NOTICE_STATUS = 'Y'
+	</entry>
+	<entry key="selectKeywordListCount">
+		SELECT COUNT(*) COUNT
+		  FROM NOTICE
+		 WHERE NOTICE_STATUS = 'Y'
+		   AND (NOTICE_TITLE LIKE '%' || ? || '%'
+		    OR NOTICE_CONTENT LIKE '%' || ? || '%')
+	</entry>
+	<entry key="selectList">
+		SELECT NOTICE_NO,
+		       NOTICE_TYPE,
+		       NOTICE_TITLE,
+		       NOTICE_CONTENT,
+		       NOTICE_HIT,
+		       NOTICE_RDATE
+		  FROM(SELECT ROWNUM "RNUM", N.*
+		  		 FROM (SELECT *
+					     FROM NOTICE
+			    	    WHERE NOTICE_STATUS = 'Y'
+					    ORDER BY NOTICE_NO DESC) N)
+		 WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	<entry key="selectKeywordList">
+		SELECT NOTICE_NO,
+		       NOTICE_TYPE,
+		       NOTICE_TITLE,
+		       NOTICE_CONTENT,
+		       NOTICE_HIT,
+		       NOTICE_RDATE
+		  FROM(SELECT ROWNUM "RNUM", N.*
+		  		 FROM (SELECT *
+					     FROM NOTICE
+			    	    WHERE NOTICE_STATUS = 'Y'
+			    	      AND (NOTICE_TITLE LIKE '%' || ? || '%'
+		    			   OR NOTICE_CONTENT LIKE '%' || ? || '%')
+					    ORDER BY NOTICE_NO DESC) N)
+		 WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	<entry key="selectNotice">
+		SELECT NOTICE_NO,
+			   NOTICE_TYPE,
+			   NOTICE_TITLE,
+			   NOTICE_CONTENT,
+			   NOTICE_HIT,
+			   NOTICE_RDATE,
+			   NOTICE_STATUS
+		  FROM NOTICE
+		 WHERE NOTICE_STATUS = 'Y'
+		   AND NOTICE_NO = ?
+	</entry>
+	<entry key="increaseCount">
+		UPDATE NOTICE
+		   SET NOTICE_HIT = NOTICE_HIT + 1
+		 WHERE NOTICE_STATUS = 'Y'
+		   AND NOTICE_NO = ?
+	</entry>
+		<!-- 관리자용 공지사항 전체조회 -->
+	<entry key="adminSelectNoticeAll">
+		SELECT *
+		FROM NOTICE
+	</entry>
+	<!-- 관리자용 공지사항 정보수정 -->
+	<entry key="adminUpdateNotice">
+		UPDATE NOTICE
+		SET NOTICE_TYPE = ?
+			,NOTICE_TITLE = ?
+			,NOTICE_CONTENT = ?
+			,NOTICE_STATUS = ?
+		WHERE NOTICE_NO = ?
+	</entry>
+	
+</properties>
+

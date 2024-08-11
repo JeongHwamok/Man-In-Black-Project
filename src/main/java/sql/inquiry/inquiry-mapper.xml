@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<!-- INQUIRY 테이블 관련 쿼리문들 -->
+	
+	<!-- 상품별 문의 조회 리스트 -->
+	<entry key="selectInquiry">
+		SELECT INQUIRY_NO
+		     , INQUIRY_TITLE
+		     , SUBSTR(M.MEMBER_ID, 1, 3) || '*****' AS MEMBER_ID
+		     , INQUIRY_DATE
+		     , PRODUCT_NAME
+		  FROM INQUIRY I
+		  JOIN MEMBER M ON (I.MEMBER_NO = M.MEMBER_NO)
+		  JOIN PRODUCT P ON (I.PRODUCT_NO = P.PRODUCT_NO)
+		 WHERE I.PRODUCT_NO = ?
+	     ORDER BY INQUIRY_NO ASC
+	</entry>
+	
+	<!-- 상품문의 상세조회 -->
+	<entry key="selectInquiryDetail">
+		SELECT INQUIRY_NO
+		     , INQUIRY_TITLE
+		     , INQUIRY_COMMENT
+		     , SUBSTR(M.MEMBER_ID, 1, 3) || '*****' AS MEMBER_ID
+		     , INQUIRY_DATE
+		     , PRODUCT_NAME
+		  FROM INQUIRY I
+		  JOIN MEMBER M ON (I.MEMBER_NO = M.MEMBER_NO)
+		  JOIN PRODUCT P ON (I.PRODUCT_NO = P.PRODUCT_NO)
+		 WHERE INQUIRY_NO = ?
+	</entry>
+	
+	<!-- 문의사항 댓글 작성용 -->
+	<entry key="insertReply">
+		UPDATE INQUIRY
+		   SET INQUIRY_ANSWER = ?
+		     , INQUIRY_ANSWER_DATE = SYSDATE
+		 WHERE INQUIRY_NO = ?
+ 	</entry>
+ 	
+ 	<!-- 문의사항 댓글 조회용 -->
+ 	<entry key="selectReplyList">
+ 		SELECT INQUIRY_ANSWER
+		     , INQUIRY_ANSWER_DATE
+		  FROM INQUIRY
+		 WHERE INQUIRY_NO = ?
+ 	</entry>
+ 	
+ 	<!-- 상품문의 작성용 -->
+ 	<entry key="insertInquiry">
+ 		INSERT INTO INQUIRY VALUES(SEQ_INQUIRY_NO.NEXTVAL
+		                         , ?
+		                         , ?
+		                         ,SYSDATE
+		                         ,NULL
+		                         ,NULL
+		                         ,(SELECT MEMBER_NO FROM MEMBER M WHERE MEMBER_ID=?)
+		                         , ?)
+ 	</entry>
+ 	
+ 	<!-- 내 상품문의 조회용 -->
+ 	<entry key="selectMyInquiry">
+	 	SELECT INQUIRY_NO     
+	     , INQUIRY_TITLE
+	     , INQUIRY_COMMENT
+	     , INQUIRY_DATE
+	     , INQUIRY_ANSWER
+	     , PRODUCT_NAME
+	  FROM INQUIRY I
+	  JOIN PRODUCT P ON (I.PRODUCT_NO = P.PRODUCT_NO)
+	  JOIN MEMBER M ON(I.MEMBER_NO = M.MEMBER_NO)
+	 WHERE MEMBER_ID = ?
+ 	</entry>
+ 	
+ 	<!-- 내 문의내역 삭제 -->
+ 	<entry key="deleteInquiry">
+ 		DELETE
+		  FROM INQUIRY
+		 WHERE INQUIRY_NO = ?
+ 	</entry>
+ 	
+ 	<!-- 관리자용 문의 조회 -->
+ 	<entry key="adminSelectInquiry">
+		SELECT I.INQUIRY_NO, 
+		       I.INQUIRY_TITLE, 
+		       I.INQUIRY_COMMENT, 
+		       I.INQUIRY_DATE, 
+		       I.INQUIRY_ANSWER, 
+		       I.INQUIRY_ANSWER_DATE, 
+		       M.MEMBER_NO, 
+		       P.PRODUCT_NO
+		FROM INQUIRY I
+		JOIN PRODUCT P ON I.PRODUCT_NO = P.PRODUCT_NO
+		JOIN MEMBER M ON I.MEMBER_NO = M.MEMBER_NO
+ 	</entry>
+ 	
+ 	<!-- 관리자용 문의 수정 -->
+ 	<entry key="adminUpdateInquiry">		 
+		UPDATE INQUIRY
+		SET INQUIRY_ANSWER = ?,
+		INQUIRY_ANSWER_DATE = SYSDATE
+		WHERE INQUIRY_NO = ?
+	</entry>
+ 	
+</properties>
+

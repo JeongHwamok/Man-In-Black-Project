@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<!-- MEMBER 테이블 관련 쿼리문들 -->
+	<entry key="loginMember">
+		SELECT *
+		  FROM MEMBER
+		 WHERE MEMBER_ID = ?
+	      AND MEMBER_PWD = ?
+	      AND MEMBER_STATUS = 'Y'	                       
+	</entry>
+	
+	<entry key="updateMember">
+		UPDATE MEMBER
+		SET MEMBER_PHONE = ?,
+		MEMBER_EMAIL = ?,
+		MEMBER_ADDRESS = ?
+		WHERE MEMBER_ID = ?
+	</entry>
+	
+	<entry key="selectMyMember">
+		SELECT *
+		  FROM MEMBER
+		 WHERE MEMBER_ID = ?
+		   AND MEMBER_STATUS = 'Y'
+	</entry>
+	
+	
+	<entry key="adminSelectMemberAll">
+		SELECT *
+		FROM MEMBER
+	</entry>
+	<entry key="adminSelectMember">
+		SELECT *
+		FROM MEMBER
+		WHERE MEMBER_ID = ?
+	</entry>
+	<entry key="adminUpdateMember">
+		UPDATE MEMBER
+		SET MEMBER_STATUS = ?
+		WHERE MEMBER_ID = ?
+	</entry>
+	<!-- 회원 탈퇴용 쿼리문 -->
+	<entry key="deleteMember">
+		UPDATE MEMBER
+		   SET MEMBER_STATUS = 'N'
+		 WHERE MEMBER_ID = ?  
+		   AND MEMBER_PWD = ?
+		   AND MEMBER_STATUS = 'Y'
+	</entry>
+	
+	<!-- 회원가입용 쿼리문  --> 
+	<entry key="insertMember">
+    INSERT INTO MEMBER( MEMBER_NO
+    							 , MEMBER_ID
+    							 , MEMBER_PWD
+    							 , MEMBER_NAME
+    							 , MEMBER_PHONE
+    							 , MEMBER_EMAIL
+    							 , MEMBER_BIRTHDATE
+    							 , MEMBER_ADDRESS
+    							 , MEMBER_REGDATE
+    							 , MEMBER_STATUS )
+        VALUES(SEQ_MEMBER_NO.NEXTVAL
+                        , ?
+                        , ?
+                        , ?
+                        , ?
+                        , ?
+                        , ?
+                        , ?
+                        , SYSDATE
+                        , 'Y' )
+	</entry>
+
+	<!-- 아이디 중복확인용 쿼리문 -->
+	<entry key="idCheck">
+		SELECT COUNT(*)
+			FROM MEMBER
+		  WHERE MEMBER_ID = ?
+	</entry>
+	
+	<!-- 아이디 찾기용 쿼리문 -->
+	<entry key="idFind">
+		SELECT MEMBER_ID
+			FROM MEMBER
+		  WHERE MEMBER_EMAIL = ?
+	</entry>
+	
+	<!-- 비밀번호 찾기용 쿼리문 -->
+	<entry key="resetPwd">
+		SELECT MEMBER_PWD
+			FROM MEMBER
+		  WHERE MEMBER_EMAIL = ?
+		  	AND	MEMBER_ID = ?		  		
+	</entry>
+	
+	<!-- 마이페이지 비밀번호 변경용 쿼리문 -->
+	<entry key="updatePwdMember">
+	UPDATE "MEMBER"
+       SET MEMBER_PWD = ?
+  WHERE MEMBER_ID = ?
+       AND MEMBER_STATUS = 'Y'
+	</entry>
+	
+	<!--비밀번호 변경용 쿼리문 -->
+	<entry key="changePwd">
+		UPDATE MEMBER
+			SET MEMBER_PWD = ?
+		  WHERE MEMBER_EMAIL = ?
+		  	AND MEMBER_ID = ?
+	</entry>
+	
+	<!-- 회원 1명 선택 쿼리 -->
+	<entry key="selectMember">
+		SELECT MEMBER_NO,
+			   MEMBER_ID,
+			   MEMBER_PWD,
+			   MEMBER_NAME,
+			   MEMBER_PHONE,
+			   MEMBER_EMAIL,
+			   MEMBER_BIRTHDATE,
+			   MEMBER_ADDRESS,
+			   MEMBER_REGDATE,
+			   MEMBER_STATUS
+		  FROM MEMBER
+		 WHERE MEMBER_NO = ?
+	</entry>
+</properties>
+

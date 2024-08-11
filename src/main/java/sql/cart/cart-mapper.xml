@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<!-- 장바구니 조회용 쿼리문 -->
+	<!-- 상품이미지, 상품명, 옵션(사이즈), 수량, 가격 -->
+	<entry key="selectCartList">
+		SELECT C.CART_NO
+			 , P.PRODUCT_NO
+			 , P.PRODUCT_NAME
+		     , S.SIZE_NAME
+		     , C.CART_COUNT
+		     , C.CART_PRICE
+		     , I.IMAGE_PATH
+		     , I.IMAGE_CHANGE_NAME
+		     , M.MEMBER_NO
+		  FROM CART C
+		  JOIN PRODUCT P ON (C.PRODUCT_NO = P.PRODUCT_NO)
+		  JOIN "SIZE" S ON (C.SIZE_NO = S.SIZE_NO)
+		  JOIN IMAGE I ON (C.PRODUCT_NO = I.PRODUCT_NO)
+		  JOIN MEMBER M ON (C.MEMBER_NO = M.MEMBER_NO)
+		 WHERE MEMBER_ID = ?
+		   AND IMAGE_LEVEL = 1
+	</entry> 
+	
+	<!-- 장바구니 삭제용 쿼리문 -->
+	<entry key="deleteCart">
+		DELETE
+		  FROM CART
+		 WHERE CART_NO = ?
+	</entry>
+
+	<!-- 장바구니 수정용 쿼리문 -->
+	<entry key="updateCart">
+		UPDATE CART
+		   SET CART_COUNT = ?
+		 WHERE CART_NO = ?
+	</entry>
+	
+	<!-- 장바구니 추가용 쿼리문 -->
+	<!-- CART_NO, CART_COUNT, CART_PRICE, SIZE_NO, MEMBER_NO, PRODUCT_NO -->
+	<entry key="insertCart">
+		INSERT INTO CART VALUES(SEQ_CART_NO.NEXTVAL
+							  , 1
+							  , ?
+							  , (SELECT SIZE_NO FROM "SIZE" WHERE SIZE_NAME = ?)
+							  , (SELECT MEMBER_NO FROM MEMBER WHERE MEMBER_ID= ?)
+							  , ?)
+		
+	</entry>
+</properties>
+
+
+
+
